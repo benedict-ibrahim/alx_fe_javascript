@@ -12,8 +12,6 @@ let quotes = [
 const quoteDisplay = document.getElementById('quoteDisplay');
 const newQuoteBtn = document.getElementById('newQuote');
 const categorySelect = document.getElementById('categorySelect');
-const newQuoteText = document.getElementById('newQuoteText');
-const newQuoteCategory = document.getElementById('newQuoteCategory');
 
 // Initialize the app
 function init() {
@@ -22,6 +20,9 @@ function init() {
   
   // Display a random quote on page load
   showRandomQuote();
+  
+  // Create the add quote form
+  createAddQuoteForm();
   
   // Event listeners
   newQuoteBtn.addEventListener('click', showRandomQuote);
@@ -58,18 +59,50 @@ function showRandomQuote() {
   `;
 }
 
+// Create the form for adding new quotes
+function createAddQuoteForm() {
+  const formContainer = document.createElement('div');
+  formContainer.className = 'form-container';
+  
+  const heading = document.createElement('h3');
+  heading.textContent = 'Add a New Quote';
+  
+  const quoteInput = document.createElement('input');
+  quoteInput.id = 'newQuoteText';
+  quoteInput.type = 'text';
+  quoteInput.placeholder = 'Enter a new quote';
+  
+  const categoryInput = document.createElement('input');
+  categoryInput.id = 'newQuoteCategory';
+  categoryInput.type = 'text';
+  categoryInput.placeholder = 'Enter quote category';
+  
+  const addButton = document.createElement('button');
+  addButton.textContent = 'Add Quote';
+  addButton.addEventListener('click', addQuote);
+  
+  // Append all elements to the form container
+  formContainer.appendChild(heading);
+  formContainer.appendChild(quoteInput);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addButton);
+  
+  // Append the form to the body (or a specific container)
+  document.body.appendChild(formContainer);
+}
+
 // Add a new quote to the database
 function addQuote() {
-  const text = newQuoteText.value.trim();
-  const category = newQuoteCategory.value.trim();
+  const text = document.getElementById('newQuoteText').value.trim();
+  const category = document.getElementById('newQuoteCategory').value.trim();
   
   if (text && category) {
     // Add new quote
     quotes.push({ text, category });
     
     // Clear form fields
-    newQuoteText.value = '';
-    newQuoteCategory.value = '';
+    document.getElementById('newQuoteText').value = '';
+    document.getElementById('newQuoteCategory').value = '';
     
     // Update UI
     updateCategoryDropdown();
