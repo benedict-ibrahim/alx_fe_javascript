@@ -8,9 +8,9 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
   
-  <div>
-    <label for="categorySelect">Filter by category:</label>
-    <select id="categorySelect">
+  <div class="filter-container">
+    <label for="categoryFilter">Filter by category:</label>
+    <select id="categoryFilter">
       <option value="all">All Categories</option>
     </select>
     <button id="newQuote">Show New Quote</button>
@@ -32,10 +32,11 @@
 
   <div class="data-actions">
     <button onclick="exportToJson()">Export Quotes to JSON</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-    <label for="importFile" class="button">Import Quotes from JSON</label>
+    <input type="file" id="importFile" accept=".json" />
+    <button onclick="document.getElementById('importFile').click()">Import Quotes from JSON</button>
     <button onclick="clearAllQuotes()">Clear All Quotes</button>
   </div>
+
 
   <script src="script.js"></script>
 </body>
