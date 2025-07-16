@@ -169,10 +169,6 @@ async function postQuotesToServer(quotesToSend) {
   }
 }
 
-/**
- * Main synchronization function
- * @returns {Promise<void>}
- */
 async function syncQuotes() {
   if (syncInProgress) {
     showNotification('Sync already in progress', true);
@@ -209,7 +205,7 @@ async function syncQuotes() {
     // Step 5: Post local changes to server
     const postResult = await postQuotesToServer(quotes);
     if (postResult) {
-      showNotification('Local changes successfully synced to server');
+      showNotification('Quotes synced with server successfully!');
     }
 
     // Update sync status
@@ -264,7 +260,7 @@ function mergeQuotes(localQuotes, serverQuotes) {
 function showConflictResolution(conflicts) {
   conflictResolutionDiv.style.display = 'block';
   conflictResolutionDiv.dataset.conflicts = JSON.stringify(conflicts);
-  showNotification(`Found ${conflicts.length} conflicts`);
+  showNotification(`Found ${conflicts.length} conflicts that need resolution`);
 }
 
 function resolveConflict(resolutionType) {
@@ -291,11 +287,11 @@ function resolveConflict(resolutionType) {
 
   saveQuotes();
   conflictResolutionDiv.style.display = 'none';
-  showNotification('Conflicts resolved');
+  showNotification('Conflicts resolved successfully!');
   showRandomQuote();
 }
 
-/* Utility Functions */
+/* Notification System */
 function showNotification(message, isError = false) {
   notificationDiv.textContent = message;
   notificationDiv.style.backgroundColor = isError ? '#f44336' : '#4CAF50';
@@ -321,7 +317,7 @@ function exportToJson() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showNotification('Export successful!');
+  showNotification('Quotes exported successfully!');
 }
 
 function importFromJsonFile(event) {
@@ -341,7 +337,7 @@ function importFromJsonFile(event) {
       saveQuotes();
       populateCategories();
       showRandomQuote();
-      showNotification(`Imported ${imported.length} quotes`);
+      showNotification(`Successfully imported ${imported.length} quotes`);
     } catch (error) {
       showNotification('Import failed: ' + error.message, true);
     }
@@ -351,7 +347,7 @@ function importFromJsonFile(event) {
 }
 
 function clearAllQuotes() {
-  if (confirm('Clear all quotes? This cannot be undone.')) {
+  if (confirm('Are you sure you want to clear all quotes? This cannot be undone.')) {
     quotes = [];
     saveQuotes();
     populateCategories();
@@ -359,7 +355,7 @@ function clearAllQuotes() {
       <p class="quote-text">All quotes have been cleared.</p>
       <p class="quote-category"></p>
     `;
-    showNotification('All quotes cleared');
+    showNotification('All quotes cleared successfully');
   }
 }
 
