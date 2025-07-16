@@ -169,36 +169,54 @@ async function postQuotesToServer(quotesToSend) {
   }
 }
 
-function setupSync() {
-  syncWithServer();
-  setInterval(syncWithServer, syncInterval);
-  updateSyncStatus();
-}
+/**
+ * Main synchronization function
+ * @returns {Promise<void>}
+ */
+async function syncQuotes() {
+  if (syncInProgress) {
+    showNotification('Sync already in progress', true);
+    return;
+  }
 
-async function syncWithServer() {
-  if (syncInProgress) return;
   syncInProgress = true;
-  showNotification('Starting sync...');
-  
-  try {
-    // Two-way sync
-    const [serverQuotes, postResult] = await Promise.all([
-      fetchQuotesFromServer(),
-      postQuotesToServer(quotes)
-    ]);
+  showNotification('Starting quote synchronization...');
 
+  try {
+    // Step 1: Fetch server quotes
+    const serverQuotes = await fetchQuotesFromServer();
+    showNotification(`Retrieved ${serverQuotes.length} quotes from server`);
+
+    // Step 2: Detect and handle conflicts
     const conflicts = detectConflicts(quotes, serverQuotes);
     if (conflicts.length > 0) {
-      showConflictResolution(conflicts);
-    } else {
-      quotes = mergeQuotes(quotes, serverQuotes);
-      saveQuotes();
-      showNotification('Sync completed successfully!');
+      showNotification(`${conflicts.length} conflicts detected`, true);
+      return showConflictResolution(conflicts);
     }
 
+    // Step 3: Merge quotes
+    const mergedQuotes = mergeQuotes(quotes, serverQuotes);
+    const newQuotesCount = mergedQuotes.length - quotes.length;
+    
+    if (newQuotesCount > 0) {
+      showNotification(`Added ${newQuotesCount} new quotes from server`);
+    }
+
+    // Step 4: Update local storage
+    quotes = mergedQuotes;
+    saveQuotes();
+
+    // Step 5: Post local changes to server
+    const postResult = await postQuotesToServer(quotes);
+    if (postResult) {
+      showNotification('Local changes successfully synced to server');
+    }
+
+    // Update sync status
     lastSyncTime = Date.now();
     localStorage.setItem(LAST_SYNC_KEY, lastSyncTime.toString());
     updateSyncStatus();
+
   } catch (error) {
     console.error('Sync error:', error);
     showNotification('Sync failed: ' + error.message, true);
@@ -207,9 +225,19 @@ async function syncWithServer() {
   }
 }
 
+function setupSync() {
+  // Initial sync
+  syncQuotes();
+  
+  // Set up periodic sync
+  setInterval(syncQuotes, syncInterval);
+  
+  // Update sync status display
+  updateSyncStatus();
+}
+
 function manualSync() {
-  showNotification('Manual sync initiated...');
-  syncWithServer();
+  syncQuotes();
 }
 
 /* Conflict Resolution */
