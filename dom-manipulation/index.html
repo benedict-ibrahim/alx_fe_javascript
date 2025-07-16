@@ -6,38 +6,26 @@
   <title>Dynamic Quote Generator</title>
 </head>
 <body>
-  <h1>Dynamic Quote Generator</h1>
+  <!-- Previous HTML remains the same until the data-actions div -->
   
-  <div class="filter-container">
-    <label for="categoryFilter">Filter by category:</label>
-    <select id="categoryFilter">
-      <option value="all">All Categories</option>
-    </select>
-    <button id="newQuote">Show New Quote</button>
-  </div>
-  
-  <div id="quoteDisplay">
-    <p class="quote-text">Click the button to display a random quote!</p>
-    <p class="quote-category"></p>
-  </div>
-
-  <div id="lastViewed"></div>
-  
-  <div class="form-container">
-    <h3>Add a New Quote</h3>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button onclick="addQuote()">Add Quote</button>
-  </div>
-
   <div class="data-actions">
     <button onclick="exportToJson()">Export Quotes to JSON</button>
     <input type="file" id="importFile" accept=".json" />
     <button onclick="document.getElementById('importFile').click()">Import Quotes from JSON</button>
     <button onclick="clearAllQuotes()">Clear All Quotes</button>
+    <button onclick="manualSync()">Sync Now</button>
   </div>
 
+  <div id="conflictResolution" class="conflict-resolution">
+    <h3>Conflict Detected!</h3>
+    <p>We found conflicting versions of your quotes. How would you like to resolve this?</p>
+    <button onclick="resolveConflict('local')">Keep My Changes</button>
+    <button onclick="resolveConflict('server')">Use Server Version</button>
+    <button onclick="resolveConflict('merge')">Merge Both</button>
+  </div>
 
+  <div id="notification" class="notification"></div>
+  <div id="syncStatus" class="sync-status">Last sync: Never</div>
   <script src="script.js"></script>
 </body>
 </html>
